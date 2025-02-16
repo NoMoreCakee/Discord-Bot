@@ -61,9 +61,9 @@ class Moderation(commands.Cog):
 
         try: await ctx.guild.unban(user)
 
-        except NotFound: ctx.send("User is either not banned or non-existent.")
-        except Forbidden: ctx.send("You don't have the permission to unban this member.")
-        except HTTPException: ctx.send("Unbanning failed. Possibly server error.")
+        except NotFound: await ctx.send("User is either not banned or non-existent.")
+        except Forbidden: await ctx.send("You don't have the permission to unban this member.")
+        except HTTPException: await ctx.send("Unbanning failed. Possibly server error.")
 
         else: await ctx.send(f"Successfully unbanned {globalname}.")
 
