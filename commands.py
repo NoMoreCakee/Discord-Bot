@@ -30,6 +30,30 @@ async def roll(count=1, sides=6, message=None):
 
     return message_out
 
+
+# @bot.command()
+# async def rolldice(ctx, arg):
+#     if len(arg) > 0:
+#         for i in arg:
+#             if not i.isdigit():
+#                 await ctx.send("Please only provide digits.")
+#                 return
+#             if int(i) <= 0:
+#                 await ctx.send("Values can't be negative.")
+#                 return
+#     if not arg:
+#         ret_value = await roll(message=message)
+#         if ret_value:
+#             await ctx.send(ret_value)
+#     if len(arg) == 1:
+#         ret_value = await roll(int(arg[0]), message=message)
+#         if ret_value:
+#             await ctx.send(ret_value)
+#     if len(arg) > 1:
+#         ret_value = await roll(int(arg[0]), int(arg[1]), message=message)
+#         if ret_value:
+#             await ctx.send(ret_value)
+
 # PURGE
 
 async def purge(amount: int, message):
@@ -38,53 +62,3 @@ async def purge(amount: int, message):
         amount = 49
     await message.channel.purge(limit=amount)
     return
-
-# KICK
-
-async def kick(message: Message, user_id, reason):
-    if user_id[:2] == "<@" and user_id[-1] == ">": user_id = user_id[2:-1]
-
-    user = await message.guild.fetch_member(user_id)
-    globalname = user.name
-
-    try: await message.guild.kick(user, reason=reason)
-
-    except Forbidden: await message.channel.send("You don't have permission to kick this member.")
-    except HTTPException: await message.channel.send("Kicking failed. Possibly server error.")
-    except NotFound: await message.channel.send("User does not exist in the server.")
-
-    else:
-        if not reason: await message.channel.send(f"Successfully kicked {globalname}.")
-        else: await message.channel.send(f"Successfully kicked {globalname} with the reason: \"{reason}\"")
-
-# BAN
-
-async def ban(message: Message, self: Client, user_id, reason):
-    if user_id[:2] == "<@" and user_id[-1] == ">": user_id = user_id[2:-1]
-
-    user = await self.fetch_user(user_id)
-    globalname = user.name
-
-    try: await message.guild.ban(user, reason=reason)
-
-    except Forbidden: message.channel.send("You don't have the permission to kick this member.")
-    except HTTPException: message.channel.send("Ban failed. Possibly server error.")
-    except NotFound: message.channel.send("User does not exist in the server.")
-
-    else: 
-        if not reason: await message.channel.send(f"Successfully banned {globalname}") 
-        else: await message.channel.send(f"Successfully banned {globalname} with the reason \"{reason}\"")
-
-# UNBAN
-
-async def unban(message: Message, self: Client, user_id):
-    user = await self.fetch_user(user_id)
-    globalname = user.name
-
-    try: await message.guild.unban(user)
-
-    except NotFound: message.channel.send("User is either non-existent or not banned.")
-    except Forbidden: message.channel.send("You don't have the permission to unban this user.")
-    except HTTPException: message.channel.send("Unban failed. Possibly server error.")
-
-    else: await message.channel.send(f"Successfully unbanned {globalname}.")
