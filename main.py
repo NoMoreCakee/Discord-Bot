@@ -1,14 +1,10 @@
-import dotenv
+import dotenv, asyncio
 from discord import *
 from discord.ext import commands
-from commands import *
 
 dotenv.load_dotenv()
 
 prefix = '$'
-
-def send_help():
-    return "> $roll <count> <sides>\n > Default value: 1d6"
 
 # class DCClient(Client):
 
@@ -58,33 +54,40 @@ def send_help():
 
 intents = Intents.default()
 intents.message_content = True
-
 bot = commands.Bot(command_prefix=prefix, intents=intents)
-bot.run(dotenv.get_key(".env","API_KEY"))
+
+async def load_cogs():
+    await bot.load_extension("cogs.moderation")
 
 @bot.event
-async def on_ready(self):
-        print(f"Logged on as {self.user}!")
+async def on_ready():
+        print(f"Logged on as {bot.user}!")
 
-@bot.command(name='roll')
-async def roll(ctx, arg):
-    if len(arg) > 0:
-        for i in arg:
-            if not i.isdigit():
-                await message.channel.send("Please only provide digits.")
-                return
-            if int(i) <= 0:
-                await message.channel.send("Values can't be negative.")
-                return
-    if not arg:
-        ret_value = await roll(message=message)
-        if ret_value:
-            await message.channel.send(ret_value)
-    if len(arg) == 1:
-        ret_value = await roll(int(arg[0]), message=message)
-        if ret_value:
-            await message.channel.send(ret_value)
-    if len(arg) > 1:
-        ret_value = await roll(int(arg[0]), int(arg[1]), message=message)
-        if ret_value:
-            await message.channel.send(ret_value)
+# @bot.command()
+# async def rolldice(ctx, arg):
+#     if len(arg) > 0:
+#         for i in arg:
+#             if not i.isdigit():
+#                 await ctx.send("Please only provide digits.")
+#                 return
+#             if int(i) <= 0:
+#                 await ctx.send("Values can't be negative.")
+#                 return
+#     if not arg:
+#         ret_value = await roll(message=message)
+#         if ret_value:
+#             await ctx.send(ret_value)
+#     if len(arg) == 1:
+#         ret_value = await roll(int(arg[0]), message=message)
+#         if ret_value:
+#             await ctx.send(ret_value)
+#     if len(arg) > 1:
+#         ret_value = await roll(int(arg[0]), int(arg[1]), message=message)
+#         if ret_value:
+#             await ctx.send(ret_value)
+
+async def main():
+    await load_cogs()
+    await bot.start(dotenv.get_key(".env","API_KEY"))
+
+asyncio.run(main())
